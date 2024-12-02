@@ -34,7 +34,10 @@ class Media(Base):
     type = Column(Enum, nullabase=False)
     url = Column(String, nullabase=False)
     
-
+class Follower(Base):
+    __tablename__ = "Follower"
+    user_from_id = Column(Integer, primary_key=True, nullabase=False)
+    user_to_id = Column(Integer, primary_key=True, nullabase=False)
 
     
     
