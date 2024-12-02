@@ -22,6 +22,10 @@ class Comment(Base):
     author_id = Column(Integer)
     post_id = Column(Integer)
 
+class Post(Base):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer)
+    
 
     
     
