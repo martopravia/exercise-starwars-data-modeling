@@ -17,16 +17,26 @@ class User(Base):
 
 
 class Comment(Base):
+    __tablename__ = "Comment"
     id = Column(Integer, primary_key=True, autoincrement=True)
     comment_text = Column(String)
     author_id = Column(Integer)
     post_id = Column(Integer)
 
 class Post(Base):
+    __tablename__ = "Post"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer)
+    user_id = Column(Integer, nullabase=False)
+    
+class Media(Base):
+    __tablename__ = "Media"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(Enum, nullabase=False)
+    url = Column(String, nullabase=False)
     
 
+
+    
     
     
     
