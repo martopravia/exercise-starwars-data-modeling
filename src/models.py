@@ -16,6 +16,18 @@ class User(Base):
     email = Column(String(150), unique=True, nullabase=False)
 
 
+class Comment(Base):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    comment_text = Column(String)
+    author_id = Column(Integer)
+    post_id = Column(Integer)
 
+
+    
+    
+    
+    
+    
+    
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
