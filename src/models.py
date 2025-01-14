@@ -1,49 +1,58 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy import create_engine
 from eralchemy2 import render_er
+from datetime import datetime
 
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    username = Column(String(120), nullable=False)
-    firstname = Column(String(120), nullable=False)
-    lastname = Column(String(120), nullable=False)
+    name = Column(String(120), nullable=False)
+    password = Column(String(120), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
+    subscription_date = Column(DateTime, default=datetime.utcnow)
+    favorites = relationship("Favorite", backref="user")
+
+class Planet(Base):
+    __tablename__ = "planets"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = Column(String(120), nullable=False)
+    description = Column(String(255))
+    climate = Column(String(100))
+    terrain = Column(String(100))
+    favorites = relationship("Favorite", backref="planet")
+
+class Character(Base):
+    __tablename__ = "characters"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = Column(String(120), nullable=False)
+    species = Column(String(100))
+    gender = Column(String(50))
+    birth_year = Column(String(50))
+    planet_id = Column(Integer, ForeignKey("planets.id"), nullable=True)  
+    planet = relationship("Planet", backref="characters") 
+    favorites = relationship("Favorite", backref="character")
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    planet_id = Column(Integer, ForeignKey("planets.id"), nullable=True)
+    character_id = Column(Integer, ForeignKey("characters.id"), nullable=True)
     
 class Comment(Base):
     __tablename__ = "comments"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    comment_text = Column(String)
-    author_id = Column(Integer, ForeignKey("users.id"))
-    post_id = Column(Integer, ForeignKey("posts.id"))
-    user = relationship("User", backref="comments")
-    post = relationship("Post", backref = "comments")
-
-class Post(Base):
-    __tablename__ = "posts"
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    content = Column(String(255), nullable=False)
+    creation_date = Column(DateTime, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", backref="posts")
-
-class Media(Base):
-    __tablename__ = "medias"
-    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    type = Column(Enum, nullable=False)
-    url = Column(String(150), nullable=False)
-    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
-    post = relationship("Post", backref="medias")
-
-class Follower(Base):
-    __tablename__ = "followers"
-    user_form_id = Column(Integer, ForeignKey("users.id"), primary_key=True, nullable=False)
-    user_to_id = Column(Integer,ForeignKey("users.id"), primary_key= True, nullable=False)
-    user_form = relationship("User", backref="following")
-    user_to = relationship("User", backref="followers")
+    favorite_id = Column(Integer, ForeignKey("favorites.id"), nullable=False)
+    user = relationship("User", backref="comments")
+    favorite = relationship("Favorite", backref="comments")
 
 
 ## Draw from SQLAlchemy base
